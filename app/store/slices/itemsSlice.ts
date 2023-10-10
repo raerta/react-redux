@@ -19,9 +19,7 @@ export const getData = createAsyncThunk("getData", async () => {
   try {
     const data = localStorage.getItem("data");
     if (data) {
-      return JSON.parse(data).sort((a: { name: string }, b: { name: string }) =>
-        compareString(a.name, b.name)
-      );
+      return JSON.parse(data);
     } else {
       const response = await fetchData();
       const data: ISelectItem[] = response.items.map((item: ISelectItem) => {
@@ -32,8 +30,12 @@ export const getData = createAsyncThunk("getData", async () => {
         };
         return newItem;
       });
-      localStorage.setItem("data", JSON.stringify(data));
-      return data.sort((a, b) => compareString(a.name, b.name));
+      const sortedItems = data.sort(
+        (a: { name: string }, b: { name: string }) =>
+          compareString(a.name, b.name)
+      );
+      localStorage.setItem("data", JSON.stringify(sortedItems));
+      return sortedItems;
     }
   } catch (error: any) {
     return error.response.data;
